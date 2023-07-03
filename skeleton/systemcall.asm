@@ -15,8 +15,10 @@ loop:	syscall
 msg: .asciiz "Hello!"
 
 # Bootup code
-	.ktext
+	.ktext 
 # TODO implement the bootup code
+	la $k0 ,  0x00400000
+	mtc0 $k0, $14
 # The final exception return (eret) should jump to the beginning of the user program
 eret
 
