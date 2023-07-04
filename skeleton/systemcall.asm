@@ -78,11 +78,21 @@ ret:
 #logic for handling syscall 4
 sys_four:
 	# load the control port of the display
-	la $t0 0xffff0000 #address of the control port of the display
+	la $t0, 0xffff0000 #address of the control port of the display
+	#la $t1, 0x00400010
+	
+	mfc0 $t1, $14
+	addiu $t1, $t1, 4
+	mtc0 $t1, $14
+	eret
 	
 #logic for handlig syscall 11
 sys_eleven:
-
+	la $t0, 0xffff0000 #address of the control port of the display
+	mfc0 $t1, $14
+	addiu $t1, $t1, 4
+	mtc0 $t1, $14
+	eret
 #logic for returning to the user program
 not_four_eleven:
 	j ret
