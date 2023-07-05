@@ -2,6 +2,8 @@
 # user program
 task:
 	la      $a0, msg
+	#this was from us
+	lb 	$t0, ($a0) #delete this
 	li	$v0, 4
 	syscall
 	li	$a0, 'B'
@@ -37,6 +39,7 @@ eret
 	sw $t4 exc_t4
 	sw $t5 exc_t5
 	sw $t6 exc_t6
+	sw $t7 exc_t7
 	mfc0 $k0 $13		# Cause register
 
 # The following case can serve you as an example for detecting a specific exception:
@@ -80,6 +83,7 @@ ret:
 	lw $t4 exc_t4
 	lw $t5 exc_t5
 	lw $t6 exc_t6
+	lw $t7 exc_t7
 	move $at, $k1
 # Return to the EPC
 	eret
@@ -89,13 +93,8 @@ sys_four:
 	la $t0, 0xffff0008 #address of the control port of the display
 	#load the address data port of the display
 	la $t3, 0xffff000c
-	# store into the lower byte the next ASCII character to be displayed
-	#but first, load the address of the character(s) to be displayed
-	la $t4, exc_a0
-	# load one byte and store it in the Data port of the display
-	lb $t5, ($t4) # load the (first) byte stored in the address of $t4
-	#store this byte in the Data port of the display
-	sb $t5, ($t3) #this is storing the byte in $t5 into the address saved in $t3
+	
+	lw $t7, exc_a0
 	# now load the "word" from the address stored in $t0 (Control port)
 	# so that we can check if the display is ready to receive data
 	lw $t1, 0($t0) #do we need an offset here? 
@@ -106,19 +105,42 @@ sys_four:
 	# else the display is not ready, so
 	j display_not_ready
 	
+
+
+add_four_to_epc:
 	# add 4 to the EPC
-	mfc0 $t1, $14
-	addiu $t1, $t1, 4
-	mtc0 $t1, $14
-	eret
+	mfc0 $t6, $14
+	addiu $t6, $t6, 4
+	mtc0 $t6, $14
+	j ret
+	
 	
 display_ready:
 	#logic to be executed when the display is ready
+	# store into the lower byte the next ASCII character to be displayed
+	#but first, load the address of the character(s) to be displayed
 	
+	lb $t4, ($t7)
+	# load one byte and store it in the Data port of the display
 	
+	#here increment $t7
+	addiu $t7, $t7 ,1
+	
+	#check if we reached the end of the string
+	beqz $t4, add_four_to_epc
+	#store this byte in the Data port of the display
+	
+	sb $t4, ($t3) #this is storing the byte in $t5 into the address saved in $t3
+	 
 display_not_ready:
+
 	#logic to be executed when the display is not ready
-	
+	lw $t1, 0($t0) #do we need an offset here? 
+	# now we need to check if the lowest bit is "ready" i.e., 1
+	andi $t2, $t1, 1 #least significant bit of $t1 will be put in $t2 
+	#now check if ready or not
+	beq $t2, 1, display_ready #branch if the display is ready to print a character
+	j display_not_ready
 #logic for handlig syscall 11
 sys_eleven:
 	la $t0, 0xffff0000 #address of the control port of the display
@@ -142,3 +164,4 @@ exc_t3: .word 0
 exc_t4: .word 0
 exc_t5: .word 0
 exc_t6: .word 0
+exc_t7: .word 0
