@@ -22,7 +22,7 @@ loop2:  syscall
 # TODO Implement the bootup code
 	la $k0 ,  0x00400000
 	mtc0 $k0, $14
-	li $k1 , 7
+	li $k1 ,100 
 	mtc0 $k1 , $11 # setting the time stamp to 100 cycles 
 # Initialize all required data structures
 # The final exception return (eret) shall jump to the beginning of program 1
@@ -136,8 +136,73 @@ timint:
 pcb_task1:
 .word task1
 .word 0
+exc_zero:   .word 0
+exc_at:     .word 0
+exc_v0:     .word 0
+exc_v1:     .word 0
+exc_a0:     .word 0
+exc_a1:     .word 0
+exc_a2:     .word 0
+exc_a3:     .word 0
+exc_t0:     .word 0
+exc_t1:     .word 0
+exc_t2:     .word 0
+exc_t3:     .word 0
+exc_t4:     .word 0
+exc_t5:     .word 0
+exc_t6:     .word 0
+exc_t7:     .word 0
+exc_s0:     .word 0
+exc_s1:     .word 0
+exc_s2:     .word 0
+exc_s3:     .word 0
+exc_s4:     .word 0
+exc_s5:     .word 0
+exc_s6:     .word 0
+exc_s7:     .word 0
+exc_t8:     .word 0
+exc_t9:     .word 0
+exc_k0:     .word 0
+exc_k1:     .word 0
+exc_gp:     .word 0
+exc_sp:     .word 0
+exc_fp:     .word 0
+exc_ra:     .word 0
 # TODO Allocate space for the state of all registers here
 pcb_task2:
 .word task2
 .word 0
+
 # TODO Allocate space for the state of all registers here
+exc2_zero:   .word 0
+exc2_at:     .word 0
+exc2_v0:     .word 0
+exc2_v1:     .word 0
+exc2_a0:     .word 0
+exc2_a1:     .word 0
+exc2_a2:     .word 0
+exc2_a3:     .word 0
+exc2_t0:     .word 0
+exc2_t1:     .word 0
+exc2_t2:     .word 0
+exc2_t3:     .word 0
+exc2_t4:     .word 0
+exc2_t5:     .word 0
+exc2_t6:     .word 0
+exc2_t7:     .word 0
+exc2_s0:     .word 0
+exc2_s1:     .word 0
+exc2_s2:     .word 0
+exc2_s3:     .word 0
+exc2_s4:     .word 0
+exc2_s5:     .word 0
+exc2_s6:     .word 0
+exc2_s7:     .word 0
+exc2_t8:     .word 0
+exc2_t9:     .word 0
+exc2_k0:     .word 0
+exc2_k1:     .word 0
+exc2_gp:     .word 0
+exc2_sp:     .word 0
+exc2_fp:     .word 0
+exc2_ra:     .word 0
