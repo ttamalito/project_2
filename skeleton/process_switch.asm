@@ -3,6 +3,7 @@
 task1:	li	$a0, '0'
 	li 	$v0, 11
 	li 	$t0, 10
+	la	$t7, task2
 loop1:	syscall
 	addiu   $a0, $a0, 1
 	divu    $t1, $a0, ':'
@@ -19,12 +20,31 @@ loop2:  syscall
 
 # Bootup code
 	.ktext
-# TODO Implement the bootup code
+
+	li $t0, 1 
+	sw $t0, id1 # giving the first program an id 
+	
+	li $t0 , 2 
+	sw $t0 , id2 # giving the second program an id 
+	
+	la $t7 , task1
+	sw $t7 , pc1  # storing the programm counter of program 1 
+	
+	la $t7 , task2
+	sw $t7 , pc2  # storing the programm counter of program 2
+	
+	li $t1 , 0
+	sw $t1 , state1 # saving the state of the program 1 
+	
+	li $t1 , 0
+	sw $t1 , state2 # saving the state of the program 2		
+	
 	la $k0 ,  0x00400000
 	mtc0 $k0, $14
 	li $k1 ,100 
 	mtc0 $k1 , $11 # setting the time stamp to 100 cycles 
 # Initialize all required data structures
+
 # The final exception return (eret) shall jump to the beginning of program 1
 eret
 
@@ -136,42 +156,48 @@ timint:
 pcb_task1:
 .word task1
 .word 0
-exc_zero:   .word 0
-exc_at:     .word 0
-exc_v0:     .word 0
-exc_v1:     .word 0
-exc_a0:     .word 0
-exc_a1:     .word 0
-exc_a2:     .word 0
-exc_a3:     .word 0
-exc_t0:     .word 0
-exc_t1:     .word 0
-exc_t2:     .word 0
-exc_t3:     .word 0
-exc_t4:     .word 0
-exc_t5:     .word 0
-exc_t6:     .word 0
-exc_t7:     .word 0
-exc_s0:     .word 0
-exc_s1:     .word 0
-exc_s2:     .word 0
-exc_s3:     .word 0
-exc_s4:     .word 0
-exc_s5:     .word 0
-exc_s6:     .word 0
-exc_s7:     .word 0
-exc_t8:     .word 0
-exc_t9:     .word 0
-exc_k0:     .word 0
-exc_k1:     .word 0
-exc_gp:     .word 0
-exc_sp:     .word 0
-exc_fp:     .word 0
-exc_ra:     .word 0
+id1: .word 0 
+state1: .word 0
+pc1: .word 0
+exc1_zero:   .word 0
+exc1_at:     .word 0
+exc1_v0:     .word 0
+exc1_v1:     .word 0
+exc1_a0:     .word 0
+exc1_a1:     .word 0
+exc1_a2:     .word 0
+exc1_a3:     .word 0
+exc1_t0:     .word 0
+exc1_t1:     .word 0
+exc1_t2:     .word 0
+exc1_t3:     .word 0
+exc1_t4:     .word 0
+exc1_t5:     .word 0
+exc1_t6:     .word 0
+exc1_t7:     .word 0
+exc1_s0:     .word 0
+exc1_s1:     .word 0
+exc1_s2:     .word 0
+exc1_s3:     .word 0
+exc1_s4:     .word 0
+exc1_s5:     .word 0
+exc1_s6:     .word 0
+exc1_s7:     .word 0
+exc1_t8:     .word 0
+exc1_t9:     .word 0
+exc1_k0:     .word 0
+exc1_k1:     .word 0
+exc1_gp:     .word 0
+exc1_sp:     .word 0
+exc1_fp:     .word 0
+exc1_ra:     .word 0
 # TODO Allocate space for the state of all registers here
 pcb_task2:
 .word task2
 .word 0
+id2: .word 0 
+state2: .word 0
+pc2: .word 0
 
 # TODO Allocate space for the state of all registers here
 exc2_zero:   .word 0
