@@ -142,12 +142,20 @@ display_not_ready:
 	beq $t2, 1, display_ready #branch if the display is ready to print a character
 	j display_not_ready
 #logic for handlig syscall 11
+
+	
 sys_eleven:
-	la $t0, 0xffff0000 #address of the control port of the display
-	mfc0 $t1, $14
-	addiu $t1, $t1, 4
-	mtc0 $t1, $14
-	eret
+	la $t0, 0xffff0008 #address of the control port of the display
+	la $t3, 0xffff000c
+	lw $t1, 0($t0)
+	andi $t2, $t1, 1
+	beqz $t2 , sys_eleven
+	
+	lw $t7, exc_a0
+	#lb $t4, ($t7)
+	
+	sb $t7, ($t3)
+	j add_four_to_epc
 #logic for returning to the user program
 not_four_eleven:
 	j ret
