@@ -110,6 +110,7 @@ sys_eleven: #code from task 2.1
 
 interrupt:
 # TODO For timer interrupts, call timint
+	mtc0 $zero, $9
 	j timint
 	j ret
 ret:
@@ -162,7 +163,7 @@ save_one_start_two:
 	sw $t1, state2
 	lw $t1, pc2
 	mtc0 $t1, $14 #set the epc to the PC of task2
-	j save_unsued_regs_1
+	j save_used_regs_1
 
 save_two_start_one:
 	mfc0 $t1, $14
@@ -173,7 +174,7 @@ save_two_start_one:
 	sw $t1, state1 #set process 1 to running
 	lw $t1, pc1 #load the pc where process 1 left
 	mtc0 $t1, $14 #set the epc to the PC of task2
-	j save_unsued_regs_2	#go to save the registers of process 2
+	j save_used_regs_2	#go to save the registers of process 2
 
 #here we save all the registers that were used by the kernel	
 save_used_regs_1:
@@ -183,57 +184,57 @@ save_used_regs_1:
 	lw $v1, exc_a0
 	sw $v1, exc1_a0
 	
-	lw $v1, exc_t0
-	sw $v1, exc1_t0
+	#lw $v1, exc_t0
+	#sw $v1, exc1_t0
 	
 	lw $v1, exc_t1
 	sw $v1, exc1_t1
 
-	lw $v1, exc_t2
-	sw $v1, exc1_t2
+	#lw $v1, exc_t2
+	#sw $v1, exc1_t2
 
-	lw $v1, exc_t3
-	sw $v1, exc1_t3
+	#lw $v1, exc_t3
+	#sw $v1, exc1_t3
 
-	lw $v1, exc_t4
-	sw $v1, exc1_t4
+	#lw $v1, exc_t4
+	#sw $v1, exc1_t4
 
-	lw $v1, exc_t5
-	sw $v1, exc1_t5
+	#lw $v1, exc_t5
+	#sw $v1, exc1_t5
 
-	lw $v1, exc_t6
-	sw $v1, exc1_t6
+	#lw $v1, exc_t6
+	#sw $v1, exc1_t6
 
 	lw $v1, exc_t7
-	#sw $v1, exc1_t7
+	sw $v1, exc1_t7
 	
 	#now that everything is saved restore the values of the registers
 	j restore_regs_2
 #save all the unused registers (by the kernel)
 #this code is executed before the saving of used regs	
-save_unsued_regs_1:
-	sw $v1, exc1_v1
-	sw $s0, exc1_s0
-	sw $s1, exc1_s1
-	sw $s2, exc1_s2
-	sw $s3, exc1_s3
-	sw $s4, exc1_s4
-	sw $s5, exc1_s5
-	sw $s6, exc1_s6
-	sw $s7, exc1_s7
-	sw $t8, exc1_t8
-	sw $t9, exc1_t9
-	sw $k0, exc1_k0
-	sw $k1, exc1_k1
-	sw $gp, exc1_gp
-	sw $sp, exc1_sp
-	sw $fp, exc1_fp
-	sw $a1, exc1_a1
-	sw $a2, exc1_a2
-	#sw $a3, exc1_a3
-	#sw $ra, exc1_ra
+#save_unsued_regs_1:
+	#sw $v1, exc1_v1
+	#sw $s0, exc1_s0
+	#sw $s1, exc1_s1
+	#sw $s2, exc1_s2
+	#sw $s3, exc1_s3
+	#sw $s4, exc1_s4
+	#sw $s5, exc1_s5
+	#sw $s6, exc1_s6
+	#sw $s7, exc1_s7
+	#sw $t8, exc1_t8
+	#sw $t9, exc1_t9
+	#sw $k0, exc1_k0
+	#sw $k1, exc1_k1
+	#sw $gp, exc1_gp
+	#sw $sp, exc1_sp
+	#sw $fp, exc1_fp
+	#sw $a1, exc1_a1
+	#sw $a2, exc1_a2
+	#sw $a3,exc1_a3
+	#sw $ra,exc1_ra
 	
-	j save_used_regs_1
+	#j save_used_regs_1
 	
 #save all the registers for process 2	
 save_used_regs_2:
@@ -243,119 +244,119 @@ save_used_regs_2:
 	lw $v1, exc_a0
 	sw $v1, exc2_a0
 
-	lw $v1, exc_t0
-	sw $v1, exc2_t0
+	#lw $v1, exc_t0
+	#sw $v1, exc2_t0
 
-	lw $v1, exc_t1
-	sw $v1, exc2_t1
+	#lw $v1, exc_t1
+	#sw $v1, exc2_t1
 
-	lw $v1, exc_t2
-	sw $v1, exc2_t2
+	#lw $v1, exc_t2
+	#sw $v1, exc2_t2
 
-	lw $v1, exc_t3
-	sw $v1, exc2_t3
+	#lw $v1, exc_t3
+	#sw $v1, exc2_t3
 
-	lw $v1, exc_t4
-	sw $v1, exc2_t4
+	#lw $v1, exc_t4
+	#sw $v1, exc2_t4
 
-	lw $v1, exc_t5
-	sw $v1, exc2_t5
+	#lw $v1, exc_t5
+	#sw $v1, exc2_t5
 
-	lw $v1, exc_t6
-	sw $v1, exc2_t6
+	#lw $v1, exc_t6
+	#sw $v1, exc2_t6
 
-	lw $v1, exc_t7
-	sw $v1, exc2_t7
+	#lw $v1, exc_t7
+	#sw $v1, exc2_t7
 	
 	#now that everything is saved restore the values of the registers
 	j restore_regs_1 # restore all the registers of process 1
 #save all the unused registers (by the kernel)
 #this code is executed before the saving of used regs		
-save_unsued_regs_2:
-	sw $s0, exc2_s0
-	sw $s1, exc2_s1
-	sw $s2, exc2_s2
-	sw $s3, exc2_s3
-	sw $s4, exc2_s4
-	sw $s5, exc2_s5
-	sw $s6, exc2_s6
-	sw $s7, exc2_s7
-	sw $t8, exc2_t8
-	sw $t9, exc2_t9
-	sw $k0, exc2_k0
-	sw $k1, exc2_k1
-	sw $gp, exc2_gp
-	sw $sp, exc2_sp
-	sw $fp, exc2_fp
-	sw $a1, exc2_a1
-	sw $a2, exc2_a2
-	#sw $a3, exc2_a3
-	#sw $ra, exc2_ra
-	j save_used_regs_2 #go to save the used registers
+#save_unsued_regs_2:
+	#sw $s0, exc2_s0
+	#sw $s1, exc2_s1
+	#sw $s2, exc2_s2
+	#sw $s3, exc2_s3
+	#sw $s4, exc2_s4
+	#sw $s5, exc2_s5
+	#sw $s6, exc2_s6
+	#sw $s7, exc2_s7
+	#sw $t8, exc2_t8
+	#sw $t9, exc2_t9
+	#sw $k0, exc2_k0
+	#sw $k1, exc2_k1
+	#sw $gp, exc2_gp
+	#sw $sp, exc2_sp
+	#sw $fp, exc2_fp
+	#sw $a1, exc2_a1
+	#sw $a2, exc2_a2
+	#sw $a3,exc2_a3
+	#sw $ra,exc2_ra
+	#j save_used_regs_2 #go to save the used registers
 	
 restore_regs_2:
-	lw $s0, exc2_s0
-	lw $s1, exc2_s1
-	lw $s2, exc2_s2
-	lw $s3, exc2_s3
-	lw $s4, exc2_s4
-	lw $s5, exc2_s5
-	lw $s6, exc2_s6
-	lw $s7, exc2_s7
-	lw $t8, exc2_t8
-	lw $t9, exc2_t9
-	lw $k0, exc2_k0
-	lw $k1, exc2_k1
-	lw $gp, exc2_gp
-	lw $sp, exc2_sp
-	lw $fp, exc2_fp
-	lw $a1, exc2_a1
-	lw $a2, exc2_a2
-	lw $a3, exc2_a3
+	#lw $s0, exc2_s0
+	#lw $s1, exc2_s1
+	#lw $s2, exc2_s2
+	#lw $s3, exc2_s3
+	#lw $s4, exc2_s4
+	#lw $s5, exc2_s5
+	#lw $s6, exc2_s6
+	#lw $s7, exc2_s7
+	#lw $t8, exc2_t8
+	#lw $t9, exc2_t9
+	#lw $k0, exc2_k0
+	#lw $k1, exc2_k1
+	#lw $gp, exc2_gp
+	#lw $sp, exc2_sp
+	#lw $fp, exc2_fp
+	#lw $a1, exc2_a1
+	#lw $a2, exc2_a2
+	#lw $a3, exc2_a3
 	#lw $ra, exc2_ra
-	lw $t0, exc2_t0
+	#lw $t0, exc2_t0
 	lw $v0, exc2_v0
 	lw $a0, exc2_a0
-	lw $t1, exc2_t1
-	lw $t2, exc2_t2
-	lw $t3, exc2_t3
-	lw $t4, exc2_t4
-	lw $t5, exc2_t5
-	lw $t6, exc2_t6
-	lw $t7, exc2_t7
+	#lw $t1, exc2_t1
+	#lw $t2, exc2_t2
+	#lw $t3, exc2_t3
+	#lw $t4, exc2_t4
+	#lw $t5, exc2_t5
+	#lw $t6, exc2_t6
+	#lw $t7, exc2_t7
 	
 	j ret
 # restore all the registers for process 1
 #so that process 1 can run without issues	
 restore_regs_1:
-	lw $s0, exc1_s0
-	lw $s1, exc1_s1
-	lw $s2, exc1_s2
-	lw $s3, exc1_s3
-	lw $s4, exc1_s4
-	lw $s5, exc1_s5
-	lw $s6, exc1_s6
-	lw $s7, exc1_s7
-	lw $t8, exc1_t8
-	lw $t9, exc1_t9
-	lw $k0, exc1_k0
-	lw $k1, exc1_k1
-	lw $gp, exc1_gp
-	lw $sp, exc1_sp
-	lw $fp, exc1_fp
-	lw $a1, exc1_a1
-	lw $a2, exc1_a2
-	lw $a3, exc1_a3
+	#lw $s0, exc1_s0
+	#lw $s1, exc1_s1
+	#lw $s2, exc1_s2
+	#lw $s3, exc1_s3
+	#lw $s4, exc1_s4
+	#lw $s5, exc1_s5
+	#lw $s6, exc1_s6
+	#lw $s7, exc1_s7
+	#lw $t8, exc1_t8
+	#lw $t9, exc1_t9
+	#lw $k0, exc1_k0
+	#lw $k1, exc1_k1
+	#lw $gp, exc1_gp
+	#lw $sp, exc1_sp
+	#lw $fp, exc1_fp
+	#lw $a1, exc1_a1
+	#lw $a2, exc1_a2
+	#lw $a3, exc1_a3
 	#lw $ra, exc1_ra
 	lw $t0, exc1_t0
 	lw $v0, exc1_v0
 	lw $a0, exc1_a0
 	lw $t1, exc1_t1
-	lw $t2, exc1_t2
-	lw $t3, exc1_t3
-	lw $t4, exc1_t4
-	lw $t5, exc1_t5
-	lw $t6, exc1_t6
+	#lw $t2, exc1_t2
+	#lw $t3, exc1_t3
+	#lw $t4, exc1_t4
+	#lw $t5, exc1_t5
+	#lw $t6, exc1_t6
 	lw $t7, exc1_t7
 	
 	j ret
