@@ -20,6 +20,10 @@ loop2:  syscall
 # Bootup code
 	.ktext
 # TODO Implement the bootup code
+	la $k0 ,  0x00400000
+	mtc0 $k0, $14
+	li $k1 , 7
+	mtc0 $k1 , $11 # setting the time stamp to 100 cycles 
 # Initialize all required data structures
 # The final exception return (eret) shall jump to the beginning of program 1
 eret
@@ -32,6 +36,14 @@ eret
 	move $k1, $at
 	sw $v0 exc_v0
 	sw $a0 exc_a0
+	sw $t0 exc_t0
+	sw $t1 exc_t1
+	sw $t2 exc_t2
+	sw $t3 exc_t3
+	sw $t4 exc_t4
+	sw $t5 exc_t5
+	sw $t6 exc_t6
+	sw $t7 exc_t7
 
 	mfc0 $k0 $13		# Cause register
 
@@ -47,12 +59,32 @@ fail:	j fail			# PC is not aligned -> processor hangs
 okpc:
 	andi $a0 $k0 0x7c
 	beq $a0 0 interrupt	# 0 means interrupt
-
+	
+	beq $v0 11 sys_eleven  # check for syscall 11 
 # Exception code
 # TODO Detect and implement system calls here. Here, you can reuse parts from problem 2.1
 # Remember that an adjustment of the epc may be necessary.
-
+add_four_to_epc:
+	# add 4 to the EPC
+	mfc0 $t6, $14
+	addiu $t6, $t6, 4
+	mtc0 $t6, $14
 	j ret
+
+sys_eleven: #code from task 2.1 
+	la $t0, 0xffff0008 #address of the control port of the display
+	la $t3, 0xffff000c 
+	lw $t1, 0($t0)
+	andi $t2, $t1, 1
+	beqz $t2 , sys_eleven
+	
+	lw $t7, exc_a0
+	#lb $t4, ($t7)
+	
+	sb $t7, ($t3)
+	j add_four_to_epc
+
+	
 
 # Interrupt-specific code
 
@@ -64,6 +96,14 @@ ret:
 # Restore used registers
 	lw $v0 exc_v0
 	lw $a0 exc_a0
+	lw $t0 exc_t0
+	lw $t1 exc_t1
+	lw $t2 exc_t2
+	lw $t3 exc_t3
+	lw $t4 exc_t4
+	lw $t5 exc_t5
+	lw $t6 exc_t6
+	lw $t7 exc_t7
 	move $at, $k1
 # Return to the EPC
 	eret
@@ -72,6 +112,14 @@ ret:
 	.kdata
 exc_v0:	.word 0
 exc_a0:	.word 0
+exc_t0: .word 0
+exc_t1: .word 0
+exc_t2: .word 0
+exc_t3: .word 0
+exc_t4: .word 0
+exc_t5: .word 0
+exc_t6: .word 0
+exc_t7: .word 0
 # TODO Additional space for registers you want to save temporarily in the exception handler
 
 	.ktext
