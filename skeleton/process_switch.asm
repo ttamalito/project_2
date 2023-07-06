@@ -40,6 +40,7 @@ loop2:  syscall
 	sw $t1 , state2 # saving the state of the program 2		
 	
 	la $k0 ,  0x00400000
+	#la $k0 ,  task2
 	mtc0 $k0, $14
 	li $k1 ,100 
 	mtc0 $k1 , $11 # setting the time stamp to 100 cycles 
@@ -55,7 +56,7 @@ eret
 	# Save all registers that we will use in the exception handler
 	move $k1, $at
 	sw $v0 exc_v0
-	sw $a0 exc_a0
+	sw $a0 exc_a0 
 	sw $t0 exc_t0
 	sw $t1 exc_t1
 	sw $t2 exc_t2
@@ -110,13 +111,13 @@ sys_eleven: #code from task 2.1
 
 interrupt:
 # TODO For timer interrupts, call timint
-	mtc0 $zero, $9
+	mtc0 $zero, $9 #reset the count register
 	j timint
 	j ret
 ret:
 # Restore used registers
 	lw $v0 exc_v0
-	lw $a0 exc_a0
+	
 	lw $t0 exc_t0
 	lw $t1 exc_t1
 	lw $t2 exc_t2
@@ -126,6 +127,7 @@ ret:
 	lw $t6 exc_t6
 	lw $t7 exc_t7
 	move $at, $k1
+	lw $a0 exc_a0 #this is an issue
 # Return to the EPC
 	eret
 
@@ -184,11 +186,14 @@ save_used_regs_1:
 	lw $v1, exc_a0
 	sw $v1, exc1_a0
 	
+	lw $v1, exc_t0
+	sw $v1, exc1_t0
+	
 	lw $v1, exc_t1
 	sw $v1, exc1_t1
 
-	lw $v1, exc_t7
-	sw $v1, exc1_t7
+	#lw $v1, exc_t7
+	#sw $v1, exc1_t7
 	
 	#now that everything is saved restore the values of the registers
 	j restore_regs_2
@@ -201,6 +206,12 @@ save_used_regs_2:
 
 	lw $v1, exc_a0
 	sw $v1, exc2_a0
+	
+	lw $v1, exc_t0
+	sw $v1, exc2_t0
+	
+	lw $v1, exc_t1
+	sw $v1, exc2_t1
 
 	#now that everything is saved restore the values of the registers
 	
@@ -210,16 +221,34 @@ save_used_regs_2:
 	
 restore_regs_2:
 	lw $v0, exc2_v0
+	sw $v0, exc_v0
+	
+	
 	lw $a0, exc2_a0	
+	sw $a0, exc_a0 #store to the address that is going to be restored in ret
+	
+	lw $t0, exc2_t0
+	sw $t0, exc_t0
+	
+	lw $t1, exc2_t1
+	sw $t1, exc_t1
+	
 	j ret
 # restore all the registers for process 1
 #so that process 1 can run without issues	
 restore_regs_1:
 	lw $t0, exc1_t0
-	lw $v0, exc1_v0
+	sw $t0, exc_t0
+	
+	lw $v0, exc1_v0 #this could be an issue
+	sw $v0, exc_v0 #store it so that is restored without issues
+	
 	lw $a0, exc1_a0
+	sw $a0, exc_a0
+	
 	lw $t1, exc1_t1
-	lw $t7, exc1_t7
+	sw $t1, exc_t1
+	#lw $t7, exc1_t7
 	
 	j ret
 # Process control blocks
